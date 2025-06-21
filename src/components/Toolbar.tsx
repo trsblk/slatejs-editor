@@ -4,6 +4,7 @@ import { CustomEditor } from '../commands';
 import { HeadingType } from '../types';
 import { Editor, Element } from 'slate';
 import { useEffect, useState } from 'react';
+import { saveDocument } from '../api/utils';
 
 const HEADINGS = [
   { type: 'h1', label: 'Heading 1' },
@@ -21,6 +22,7 @@ const isHeadingType = (value: string): value is HeadingType => {
 
 const Toolbar = () => {
   const editor = useSlate();
+  const [showIsSaved, setShowIsSaved] = useState(false);
 
   const [selectedBlockType, setSelectedBlockType] = useState('');
 
@@ -68,6 +70,20 @@ const Toolbar = () => {
     }
   }, [selectedBlock]);
 
+  const handleSave = () => {
+    saveDocument(editor.children);
+    setShowIsSaved(true);
+  };
+
+  // Displaying message for 3 sec about saving to database
+  useEffect(() => {
+    if (showIsSaved) {
+      setTimeout(() => {
+        setShowIsSaved(false);
+      }, 3000);
+    }
+  }, [showIsSaved]);
+
   const selectOptions = HEADINGS.map(({ type, label }) => (
     <option value={type} key={type} selected={type === selectedBlockType}>
       {label}
@@ -100,6 +116,9 @@ const Toolbar = () => {
       >
         Italic
       </button>
+      <button onClick={handleSave}>Save</button>
+
+      {showIsSaved && <p>Document was saved.</p>}
     </div>
   );
 };
