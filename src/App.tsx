@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { createEditor, Descendant } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
@@ -7,30 +7,22 @@ import Toolbar from './components/Toolbar';
 
 import { renderElement, renderLeaf } from './rendering';
 import { handleKeyDownWithEditor } from './handlers';
+import { getDocument } from './api/utils';
 
 import './App.css';
 
-// const initialValue: Descendant[] = [
-//   {
-//     type: 'paragraph',
-//     children: [{ text: 'A line of text in a paragraph.' }],
-//   },
-// ];
+const initialDocumentValue: Descendant[] = [
+  {
+    type: 'paragraph',
+    children: [{ text: 'Start editing...' }],
+  },
+];
 
 function App() {
   // Creating editor object that containt all content, selections, marks, etc.
   const [editor] = useState(() => withReact(createEditor()));
-
-  const initialValue: Descendant[] = useMemo(
-    () =>
-      JSON.parse(localStorage.getItem('content') || '') || [
-        {
-          type: 'paragraph',
-          children: [{ text: 'A line of text in a paragraph.' }],
-        },
-      ],
-    []
-  );
+  const [initialValue, setInitialValue] = useState<Descendant[]>();
+  const [savedAt, setSavedAt] = useState('');
 
   const handleKeyDown = handleKeyDownWithEditor(editor);
   const handleChange = (value: Descendant[]) => {
@@ -44,7 +36,21 @@ function App() {
     }
   };
 
-  console.log(editor);
+  useEffect(() => {
+    getDocument()
+      .then(({ data }) => {
+        setInitialValue(data.content);
+        setSavedAt(data.savedAt);
+      })
+      .catch((err) => {
+        console.log('Could not fetch data:', err.message);
+        setInitialValue(initialDocumentValue);
+      });
+  }, []);
+
+  // Imitate loading state while initial value is not available
+  if (!initialValue) return <div>Loading...</div>;
+
   return (
     <main>
       <Slate
@@ -53,6 +59,8 @@ function App() {
         onChange={handleChange}
       >
         <Toolbar />
+        {savedAt && <p>Document last updated at: {savedAt}</p>}
+
         <Editable
           onKeyDown={handleKeyDown}
           renderElement={renderElement}
