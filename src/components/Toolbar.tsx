@@ -1,4 +1,6 @@
 import { useSlate } from 'slate-react';
+import { useSWRConfig } from 'swr';
+
 import { CustomEditor } from '../commands';
 
 import { HeadingType } from '../types';
@@ -20,8 +22,14 @@ const isHeadingType = (value: string): value is HeadingType => {
   // return HEADINGS.map((heading) => heading.type).includes(value);
 };
 
-const Toolbar = () => {
+interface ToolbarProps {
+  documentId: string;
+}
+
+const Toolbar = ({ documentId }: ToolbarProps) => {
   const editor = useSlate();
+  const { mutate } = useSWRConfig();
+
   const [showIsSaved, setShowIsSaved] = useState(false);
 
   const [selectedBlockType, setSelectedBlockType] = useState('');
@@ -70,9 +78,19 @@ const Toolbar = () => {
     }
   }, [selectedBlock]);
 
-  const handleSave = () => {
-    saveDocument(editor.children);
-    setShowIsSaved(true);
+  const handleSave = async () => {
+    // TODO: send document to backend route
+    console.log(documentId);
+    const res = await saveDocument({
+      doc_content: editor.children,
+      uuid: documentId,
+    });
+
+    if (res.status === 200) {
+      setShowIsSaved(true);
+      // Refetch documents -> could also implement optimistic
+      mutate('/');
+    }
   };
 
   // Displaying message for 3 sec about saving to database
