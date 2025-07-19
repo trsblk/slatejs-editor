@@ -1,22 +1,24 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 import { Descendant } from 'slate';
 
-const DATABASE_URL =
-  'https://editor-6893b-default-rtdb.europe-west1.firebasedatabase.app/document';
+const API_URL = 'http://localhost:3000/api/documents';
 
-type Document = {
-  content: Descendant[];
-  savedAt: string;
+export type Document = {
+  doc_content: Descendant[];
+  uuid: string;
 };
 
-export const getDocument = (): Promise<AxiosResponse<Document>> => {
-  return axios.get<Document>(`${DATABASE_URL}.json`);
+export const getDocument = (uuid: string): Promise<Document[]> => {
+  return axios.get<Document[]>(`${API_URL}/${uuid}`).then((res) => res.data);
 };
 
-export const saveDocument = (documentContent: Descendant[]) => {
-  return axios.put(`${DATABASE_URL}.json`, {
-    content: documentContent,
-    savedAt: new Date().toLocaleString(),
+export const saveDocument = ({ doc_content, uuid }: Document) => {
+  return axios.put(`${API_URL}/${uuid}`, {
+    doc_content: JSON.stringify(doc_content),
   });
+};
+
+export const getDocuments = () => {
+  return axios.get<Document[]>(API_URL).then((res) => res.data);
 };

@@ -1,73 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 
-import { createEditor, Descendant } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
+import Editor from './components/Editor';
 
-import Toolbar from './components/Toolbar';
-
-import { renderElement, renderLeaf } from './rendering';
-import { handleKeyDownWithEditor } from './handlers';
-import { getDocument } from './api/utils';
+import { getDocuments } from './api/utils';
 
 import './App.css';
-
-const initialDocumentValue: Descendant[] = [
-  {
-    type: 'paragraph',
-    children: [{ text: 'Start editing...' }],
-  },
-];
+import DocumentsList from './components/DocumentsList';
 
 function App() {
-  // Creating editor object that containt all content, selections, marks, etc.
-  const [editor] = useState(() => withReact(createEditor()));
-  const [initialValue, setInitialValue] = useState<Descendant[]>();
-  const [savedAt, setSavedAt] = useState('');
+  // const [documents, setDocuments] = useState<Document[]>([]);
+  const [selectedDocument, setSelectedDocument] = useState('');
 
-  const handleKeyDown = handleKeyDownWithEditor(editor);
-  const handleChange = (value: Descendant[]) => {
-    const isAstChange = editor.operations.some(
-      (op) => 'set_selection' !== op.type
-    );
+  const { data: documents, error, isLoading } = useSWR('/', getDocuments);
 
-    if (isAstChange) {
-      const content = JSON.stringify(value);
-      localStorage.setItem('content', content);
-    }
+  // Handle selected document and display editor
+  const handleSelectDoc = (documentUuid: string) => {
+    setSelectedDocument(documentUuid);
   };
 
-  useEffect(() => {
-    getDocument()
-      .then(({ data }) => {
-        setInitialValue(data.content);
-        setSavedAt(data.savedAt);
-      })
-      .catch((err) => {
-        console.log('Could not fetch data:', err.message);
-        setInitialValue(initialDocumentValue);
-      });
-  }, []);
-
-  // Imitate loading state while initial value is not available
-  if (!initialValue) return <div>Loading...</div>;
+  if (error) {
+    return <p>Something went wrong</p>;
+  }
+  if (isLoading) {
+    return <p>Loading documents</p>;
+  }
 
   return (
     <main>
-      <Slate
-        editor={editor}
-        initialValue={initialValue}
-        onChange={handleChange}
-      >
-        <Toolbar />
-        {savedAt && <p>Document last updated at: {savedAt}</p>}
-
-        <Editable
-          onKeyDown={handleKeyDown}
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          className='main-editable'
+      {documents && (
+        <DocumentsList
+          documents={documents}
+          onSelectDoc={handleSelectDoc}
+          selectedDocument={selectedDocument}
         />
-      </Slate>
+      )}
+      {selectedDocument && <p>Selected document: {selectedDocument}</p>}
+
+      {documents?.map(({ doc_content, uuid }) =>
+        uuid === selectedDocument ? (
+          <Editor initialValue={doc_content} key={uuid} documentId={uuid} />
+        ) : null
+      )}
     </main>
   );
 }
