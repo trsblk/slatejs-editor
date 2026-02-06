@@ -1,6 +1,6 @@
 import { Editor, Element, Transforms } from 'slate';
-
-import { HeadingType } from '../types';
+import { HeadingType } from '../types/types';
+import { ElementTypes } from '../types/elements';
 
 export const CustomEditor = {
   isBoldMarkActive(editor: Editor) {
@@ -44,8 +44,8 @@ export const CustomEditor = {
     const isActive = CustomEditor.isCodeBlockActive(editor);
     Transforms.setNodes(
       editor,
-      { type: isActive ? undefined : 'code' },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
+      { type: isActive ? undefined : ElementTypes.CODE },
+      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) },
     );
   },
 
@@ -59,7 +59,7 @@ export const CustomEditor = {
     Transforms.setNodes(
       editor,
       { type: headingType },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
+      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) },
     );
   },
 
@@ -77,8 +77,8 @@ export const CustomEditor = {
     if (!isActive) {
       Transforms.setNodes(
         editor,
-        { type: 'paragraph' },
-        { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) }
+        { type: ElementTypes.PARAGRAPH },
+        { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) },
       );
     }
   },
