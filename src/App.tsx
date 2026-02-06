@@ -5,7 +5,7 @@ import Editor from './components/Editor';
 
 import { getDocuments } from './api/utils';
 
-import './App.css';
+import './App.scss';
 import DocumentsList from './components/DocumentsList';
 
 function App() {
