@@ -28,19 +28,16 @@ function App() {
 
   return (
     <main>
-      {documents && (
-        <DocumentsList
-          documents={documents}
-          onSelectDoc={handleSelectDoc}
-          selectedDocument={selectedDocument}
-        />
-      )}
-      {selectedDocument && <p>Selected document: {selectedDocument}</p>}
+      <DocumentsList
+        documents={documents}
+        onSelectDoc={handleSelectDoc}
+        selectedDocument={selectedDocument}
+      />
 
       {documents?.map(({ doc_content, uuid }) =>
         uuid === selectedDocument ? (
           <Editor initialValue={doc_content} key={uuid} documentId={uuid} />
-        ) : null
+        ) : null,
       )}
     </main>
   );

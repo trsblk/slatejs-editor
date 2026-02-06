@@ -1,7 +1,7 @@
 import { Document } from '../api/utils';
 
 interface DocumentsListProps {
-  documents: Document[];
+  documents: Document[] | undefined;
   selectedDocument: string;
   onSelectDoc: (uuid: string) => void;
 }

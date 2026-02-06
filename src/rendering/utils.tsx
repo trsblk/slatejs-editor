@@ -3,6 +3,8 @@ import CodeElement from './CodeElement';
 import DefaultElement from './DefaultElement';
 import { RenderElementProps, RenderLeafProps } from 'slate-react';
 import HeadingElement from './HeadingElement';
+import ListElement from './ListElement';
+import ListItem from './ListItem';
 
 // Define a leaf element rendering function
 export const renderLeaf = (props: RenderLeafProps) => {
@@ -22,5 +24,12 @@ export const renderElement = (props: RenderElementProps) => {
       return <HeadingElement {...props} />;
     case 'paragraph':
       return <DefaultElement {...props} />;
+    case 'ul':
+    case 'ol':
+      return <ListElement {...props} />;
+    case 'li':
+      return <ListItem {...props} />;
+    default:
+      return <div {...props.attributes}>{props.children}</div>;
   }
 };

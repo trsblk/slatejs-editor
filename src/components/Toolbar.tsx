@@ -3,10 +3,11 @@ import { useSWRConfig } from 'swr';
 
 import { CustomEditor } from '../commands';
 
-import { HeadingType } from '../types';
+import { HeadingType } from '../types/types';
 import { Editor, Element } from 'slate';
 import { useEffect, useState } from 'react';
 import { saveDocument } from '../api/utils';
+import { listsPlugin } from '../plugins/lists';
 
 const HEADINGS = [
   { type: 'h1', label: 'Heading 1' },
@@ -136,6 +137,7 @@ const Toolbar = ({ documentId }: ToolbarProps) => {
       </button>
       <button onClick={handleSave}>Save</button>
 
+      {listsPlugin.toolbar()}
       {showIsSaved && <p>Document was saved.</p>}
     </div>
   );

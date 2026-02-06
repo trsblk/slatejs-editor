@@ -1,0 +1,62 @@
+[
+  {
+    "doc_content": [
+      {
+        "type": "paragraph",
+        "children": [
+          {
+            "text": "content of mocked file 1"
+          }
+        ]
+      },
+      {
+        "type": "ul",
+        "children": [
+          {
+            "type": "li",
+            "children": [
+              {
+                "text": "li item 1"
+              }
+            ]
+          },
+          {
+            "type": "li",
+            "children": [
+              {
+                "text": "li item 2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ol",
+        "children": [
+          {
+            "type": "li",
+            "children": [
+              {
+                "text": "content of mocked file 1"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "uuid": "123"
+  },
+  {
+    "doc_content": [
+      {
+        "type": "paragraph",
+        "children": [
+          {
+            "text": "mock file"
+          }
+        ]
+      }
+    ],
+    "uuid": "345"
+  }
+]
