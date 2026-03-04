@@ -1,13 +1,11 @@
 import { useSlate } from 'slate-react';
-import { useSWRConfig } from 'swr';
-
 import { CustomEditor } from '../commands';
-
 import { HeadingType } from '../types/types';
 import { Editor, Element } from 'slate';
 import { useEffect, useState } from 'react';
 import { saveDocument } from '../api/utils';
 import { listsPlugin } from '../plugins/lists';
+import useSWRMutation from 'swr/mutation';
 
 const HEADINGS = [
   { type: 'h1', label: 'Heading 1' },
@@ -29,7 +27,11 @@ interface ToolbarProps {
 
 const Toolbar = ({ documentId }: ToolbarProps) => {
   const editor = useSlate();
-  const { mutate } = useSWRConfig();
+  // const { mutate } = useSWRConfig();
+  const { trigger, isMutating } = useSWRMutation(
+    `/api/documents/${documentId}`,
+    saveDocument,
+  );
 
   const [showIsSaved, setShowIsSaved] = useState(false);
 
@@ -80,18 +82,13 @@ const Toolbar = ({ documentId }: ToolbarProps) => {
   }, [selectedBlock]);
 
   const handleSave = async () => {
-    // TODO: send document to backend route
-    console.log(documentId);
-    const res = await saveDocument({
-      doc_content: editor.children,
-      uuid: documentId,
-    });
+    const res = await trigger({ content: editor.children });
 
     if (res.status === 200) {
       setShowIsSaved(true);
-      // Refetch documents -> could also implement optimistic
-      mutate('/');
     }
+
+    // TODO: Handling throws
   };
 
   // Displaying message for 3 sec about saving to database
@@ -138,6 +135,7 @@ const Toolbar = ({ documentId }: ToolbarProps) => {
       <button onClick={handleSave}>Save</button>
 
       {listsPlugin.toolbar()}
+      {isMutating && <p>saving...</p>}
       {showIsSaved && <p>Document was saved.</p>}
     </div>
   );

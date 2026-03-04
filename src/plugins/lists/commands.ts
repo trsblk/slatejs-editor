@@ -23,6 +23,7 @@ export const ListPluginCommands = {
           !Editor.isEditor(n) &&
           (n as Element).type === ElementTypes.UL) ||
         (n as Element).type === ElementTypes.OL,
+      split: true,
     });
 
     // Transform into paragraphs
