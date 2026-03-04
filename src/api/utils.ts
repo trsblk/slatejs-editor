@@ -2,23 +2,26 @@ import axios from 'axios';
 
 import { Descendant } from 'slate';
 
-const API_URL = 'http://localhost:3000/api/documents';
+const API_URL = 'http://localhost:3000';
 
 export type Document = {
-  doc_content: Descendant[];
+  content: Descendant[];
   uuid: string;
 };
 
-export const getDocument = (uuid: string): Promise<Document[]> => {
-  return axios.get<Document[]>(`${API_URL}/${uuid}`).then((res) => res.data);
+export const getDocument = (url: string) => {
+  return axios.get<Document>(`${API_URL}${url}`).then((res) => res.data);
 };
 
-export const saveDocument = ({ doc_content, uuid }: Document) => {
-  return axios.put(`${API_URL}/${uuid}`, {
-    doc_content: JSON.stringify(doc_content),
+export const saveDocument = (
+  url: string,
+  { arg }: { arg: Pick<Document, 'content'> },
+) => {
+  return axios.put(`${API_URL}${url}`, {
+    content: JSON.stringify(arg.content),
   });
 };
 
-export const getDocuments = () => {
-  return axios.get<Document[]>(API_URL).then((res) => res.data);
+export const getDocuments = (url: string) => {
+  return axios.get<Document[]>(`${API_URL}${url}`).then((res) => res.data);
 };

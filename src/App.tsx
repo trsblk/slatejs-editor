@@ -1,45 +1,30 @@
-import { useState } from 'react';
-import useSWR from 'swr';
+import { Link, Routes } from 'react-router';
+import { Route } from 'react-router';
 
+import DocumentsList from './components/DocumentsList';
 import Editor from './components/Editor';
 
-import { getDocuments } from './api/utils';
-
 import './App.scss';
-import DocumentsList from './components/DocumentsList';
 
 function App() {
-  // const [documents, setDocuments] = useState<Document[]>([]);
-  const [selectedDocument, setSelectedDocument] = useState('');
-
-  const { data: documents, error, isLoading } = useSWR('/', getDocuments);
-
-  // Handle selected document and display editor
-  const handleSelectDoc = (documentUuid: string) => {
-    setSelectedDocument(documentUuid);
-  };
-
-  if (error) {
-    return <p>Something went wrong</p>;
-  }
-  if (isLoading) {
-    return <p>Loading documents</p>;
-  }
-
   return (
-    <main>
-      <DocumentsList
-        documents={documents}
-        onSelectDoc={handleSelectDoc}
-        selectedDocument={selectedDocument}
+    <Routes>
+      <Route
+        path='/'
+        element={
+          <>
+            <h3>home page</h3>
+            <Link to={'/documents'}>Documents</Link>
+          </>
+        }
       />
 
-      {documents?.map(({ doc_content, uuid }) =>
-        uuid === selectedDocument ? (
-          <Editor initialValue={doc_content} key={uuid} documentId={uuid} />
-        ) : null,
-      )}
-    </main>
+      <Route path='documents'>
+        <Route index element={<DocumentsList />} />
+        <Route path=':id' element={<Editor />} />
+        <Route path=':id/edit' element={<p>Edit doc</p>} />
+      </Route>
+    </Routes>
   );
 }
 
