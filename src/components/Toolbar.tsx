@@ -107,7 +107,7 @@ const Toolbar = ({ documentId }: ToolbarProps) => {
   ));
 
   return (
-    <div>
+    <div className='editor-toolbar'>
       <select onChange={toggleBlockType}>
         {selectOptions}
         <option value='p' selected={selectedBlockType === 'p'}>
