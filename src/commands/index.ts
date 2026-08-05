@@ -1,4 +1,4 @@
-import { Editor, Element, Transforms } from 'slate';
+import { Editor, Element, NodeEntry, Transforms } from 'slate';
 import { HeadingType } from '../types/types';
 import { ElementTypes } from '../types/elements';
 
@@ -72,14 +72,47 @@ export const CustomEditor = {
   },
 
   toggleParagraphBlock(editor: Editor) {
-    const isActive = CustomEditor.isParagraphBlockActive(editor);
+    const isParagraphBlock = CustomEditor.isParagraphBlockActive(editor);
 
-    if (!isActive) {
+    if (!isParagraphBlock) {
+      // Sets node to paragraph
       Transforms.setNodes(
         editor,
         { type: ElementTypes.PARAGRAPH },
         { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) },
       );
+
+      // In case we are inside list
+      // Get parent list block to move paragraph element after list path
+      const listNodeEntry = Editor.above(editor, {
+        match: (n) => Element.isElement(n) && n.type === ElementTypes.UL,
+      }) as NodeEntry<Element>;
+
+      if (!listNodeEntry) {
+        return;
+      }
+
+      moveParagraphToNewPathAfterList(editor, listNodeEntry);
     }
   },
+};
+
+const moveParagraphToNewPathAfterList = (
+  editor: Editor,
+  listNodeEntry: NodeEntry,
+) => {
+  const [, listPath] = listNodeEntry;
+  const newPath = [...listPath];
+  newPath[newPath.length - 1] += 1;
+
+  const [paragraphNodeEntry] = Editor.nodes(editor, {
+    match: (n) => Element.isElement(n) && n.type === ElementTypes.PARAGRAPH,
+  });
+
+  const [, paragraphPath] = paragraphNodeEntry;
+
+  Transforms.moveNodes(editor, {
+    at: paragraphPath,
+    to: newPath,
+  });
 };
