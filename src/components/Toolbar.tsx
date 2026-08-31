@@ -7,6 +7,11 @@ import { saveDocument } from '../api/utils';
 import { listsPlugin } from '../plugins/lists';
 import useSWRMutation from 'swr/mutation';
 
+import { checkListPlugin } from '../plugins/check-list';
+
+// Try to orginize toolbar tools from plugins
+const plugins = [listsPlugin.toolbar, checkListPlugin.toolbar];
+
 const HEADINGS = [
   { type: 'h1', label: 'Heading 1' },
   { type: 'h2', label: 'Heading 2' },
@@ -106,6 +111,23 @@ const Toolbar = ({ documentId }: ToolbarProps) => {
     </option>
   ));
 
+  // * DEV Purpose
+  // const recursivelyGetEditorChildren = (children) => {
+  //   // debugger;
+  //   if (children.length === 1) {
+  //     return;
+  //   }
+
+  //   for (const node of children) {
+  //     console.log(node);
+  //     recursivelyGetEditorChildren(node.children);
+  //   }
+  // };
+
+  // // console.log(editor.children);
+
+  // recursivelyGetEditorChildren(editor.children);
+
   return (
     <div className='editor-toolbar'>
       <select onChange={toggleBlockType}>
@@ -133,8 +155,12 @@ const Toolbar = ({ documentId }: ToolbarProps) => {
         Italic
       </button>
       <button onClick={handleSave}>Save</button>
+      {/* {listsPlugin.toolbar()}
+      {checkListPlugin.toolbar(editor)} */}
 
-      {listsPlugin.toolbar()}
+      {/* Get toolbar tools/buttons from each plugin */}
+      {plugins.map((pluginToolbar) => pluginToolbar(editor))}
+
       {isMutating && <p>saving...</p>}
       {showIsSaved && <p>Document was saved.</p>}
     </div>
