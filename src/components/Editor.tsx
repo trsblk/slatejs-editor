@@ -6,7 +6,6 @@ import { Slate, Editable, withReact } from 'slate-react';
 import { renderElement, renderLeaf } from '../rendering';
 import Toolbar from './Toolbar';
 import { handleKeyDownWithEditor } from '../handlers';
-import { listsPlugin } from '../plugins/lists';
 import { Link, useParams } from 'react-router';
 import { getDocument } from '../api/utils';
 import useSWR from 'swr';
@@ -19,9 +18,8 @@ const Editor = () => {
   );
 
   // Creating editor object that containt all content, selections, marks, etc.
-  const [editor] = useState(() =>
-    listsPlugin.withLists(withReact(createEditor())),
-  );
+  // Could also here export to some function to be able to construct with plugins
+  const [editor] = useState(() => withReact(createEditor()));
 
   const handleKeyDown = handleKeyDownWithEditor(editor);
   // const handleChange = (value: Descendant[]) => {
