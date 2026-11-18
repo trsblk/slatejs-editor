@@ -1,9 +1,8 @@
-import { useSlate } from 'slate-react';
-
 import { ListPluginCommands } from './commands';
+import { Editor } from 'slate';
 
-const Toolbar = () => {
-  const editor = useSlate();
+const Toolbar = ({ editor }: { editor: Editor }) => {
+  // const editor = useSlate();
   const handleList = () => {
     const selection = editor.selection;
     if (!selection) {

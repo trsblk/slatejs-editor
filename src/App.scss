@@ -1,13 +1,18 @@
 .main-editable {
-  min-height: 20rem;
-  border: 2px solid black;
-  border-radius: 1rem;
+  height: 70vh;
+  // border: 2px solid black;
+  outline: 1px solid black;
+
+  // border-radius: 1rem;
   padding: 1rem;
   max-width: 70vw;
   margin-inline: auto;
 }
 
 .editor-toolbar {
+  outline: 1px solid black;
+  padding: 1rem;
+
   max-width: 70vw;
   margin-inline: auto;
   margin-block: 2rem;

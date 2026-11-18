@@ -1,13 +1,18 @@
 import { Editor } from 'slate';
 
 import { insertCheckList } from './commands';
+import { Button } from 'antd';
 
-export const Toolbar = (editor: Editor) => {
+export const Toolbar = ({ editor }: { editor: Editor }) => {
   const handleInsertChecklist = () => {
     // console.log(editor.selection);
 
     insertCheckList(editor);
   };
 
-  return <button onClick={handleInsertChecklist}>Insert Checklist</button>;
+  return (
+    <Button type='primary' onClick={handleInsertChecklist}>
+      Insert Checklist
+    </Button>
+  );
 };

@@ -1,7 +1,7 @@
 import { renderElement } from './render';
-import { Toolbar } from './toolbar';
+import { Toolbar } from './Toolbar';
 
 export const checkListPlugin = {
-  toolbar: Toolbar,
+  Toolbar,
   renderElement,
 };
